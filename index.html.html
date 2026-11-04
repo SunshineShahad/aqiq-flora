@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بوابة فلورا وادي العقيق الجينومية والتطورية | Wadi Al-Aqiq Phylogenomics Portal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: IBM Plex Sans Arabic & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22',
+            },
+            slate: {
+              850: '#151f32',
+              900: '#0f172a',
+              950: '#080d1a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom refined scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Interactive Scientific Glossary Badges */
+    .sci-term {
+      cursor: pointer;
+      border-bottom: 1.5px dotted #10b981;
+      transition: all 0.15s ease;
+      font-weight: 600;
+    }
+    .sci-term:hover {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #059669;
+    }
+    .dark .sci-term:hover {
+      color: #34d399;
+    }
+
+    /* Barcode nucleotide blocks */
+    .nucleotide-block {
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .nucleotide-block:hover {
+      transform: translateY(-2px) scale(1.15);
+      filter: brightness(1.25);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- ======================================================================
+       HEADER / SCIENTIFIC PORTAL APP BAR
+       ====================================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Portal Title & Branding -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 via-emerald-600 to-teal-500 text-white flex items-center justify-center font-bold shadow-lg shadow-brand-500/20">
+            <i class="fa-solid fa-dna text-lg"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">بوابة جينوميات وادي العقيق</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-semibold">PhyloGen v3.1</span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Wadi Al-Aqiq Flora & Comparative Plastomics</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="hidden lg:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs font-semibold">
+          <button onclick="switchTab('atlas')" id="nav-tab-atlas" class="nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-white dark:bg-slate-700 text-brand-700 dark:text-brand-300 shadow-sm">
+            <i class="fa-solid fa-layer-group text-xs"></i>
+            <span>أطلس الأنواع والصور</span>
+          </button>
+          <button onclick="switchTab('phylogeny')" id="nav-tab-phylogeny" class="nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-diagram-project text-xs"></i>
+            <span>النشوء والتطور (APG IV)</span>
+          </button>
+          <button onclick="switchTab('genomics')" id="nav-tab-genomics" class="nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-barcode text-xs"></i>
+            <span>استوديو الباركود والجينات</span>
+          </button>
+          <button onclick="switchTab('compare')" id="nav-tab-compare" class="nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-scale-balanced text-xs"></i>
+            <span>المقارنة التحليلية المتعددة</span>
+          </button>
+          <button onclick="switchTab('glossary')" id="nav-tab-glossary" class="nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-book-bookmark text-xs"></i>
+            <span>المعجم العلمي والمفاهيم</span>
+          </button>
+        </nav>
+
+        <!-- Right System Utilities -->
+        <div class="flex items-center gap-2.5">
+          <button onclick="openGlossaryModal('rbcL')" class="hidden sm:flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition">
+            <i class="fa-solid fa-circle-question text-brand-500"></i>
+            <span>دليل المصطلحات</span>
+          </button>
+
+          <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="تبديل المظهر">
+            <i id="theme-icon" class="fa-solid fa-moon text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile Horizontal Tab Bar -->
+      <div class="flex lg:hidden overflow-x-auto py-2 gap-2 border-t border-slate-100 dark:border-slate-800 text-xs no-scrollbar">
+        <button onclick="switchTab('atlas')" class="nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-brand-500 text-white" data-target="atlas">أطلس الأنواع</button>
+        <button onclick="switchTab('phylogeny')" class="nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-target="phylogeny">التطور والقرابة</button>
+        <button onclick="switchTab('genomics')" class="nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-target="genomics">الباركود والجينات</button>
+        <button onclick="switchTab('compare')" class="nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-target="compare">المقارنة المتعددة</button>
+        <button onclick="switchTab('glossary')" class="nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-target="glossary">المعجم العلمي</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN CONTENT CONTAINER
+       ====================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- ======================================================================
+         TAB 1: FLORA ATLAS & HIGH-RES SPECIMEN GALLERY
+         ====================================================================== -->
+    <section id="view-atlas" class="tab-view space-y-6">
+      
+      <!-- Specialized Query & Filter Toolbar -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        
+        <!-- Live Search -->
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input 
+            type="text" 
+            id="atlas-search" 
+            oninput="filterAtlas()" 
+            placeholder="بحث بالاسم اللاتيني، الشائع، العائلة النباتية، أو المركب الأيضي..." 
+            class="w-full pr-9 pl-4 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 font-sans"
+          >
+        </div>
+
+        <!-- Specialized Scientific Filters -->
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="atlas-filter-family" onchange="filterAtlas()" class="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <option value="all">كل العائلات (Families)</option>
+            <option value="Fabaceae">Fabaceae (البقولية)</option>
+            <option value="Rhamnaceae">Rhamnaceae (النبقية)</option>
+            <option value="Apocynaceae">Apocynaceae (الدفليات)</option>
+            <option value="Salvadoraceae">Salvadoraceae (السلفادورية)</option>
+            <option value="Nitrariaceae">Nitrariaceae (الحرملية)</option>
+            <option value="Amaranthaceae">Amaranthaceae (القطيفية)</option>
+            <option value="Zygophyllaceae">Zygophyllaceae (القديسية)</option>
+          </select>
+
+          <select id="atlas-filter-photosynthesis" onchange="filterAtlas()" class="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <option value="all">نمط التمثيل الضوئي (All Pathways)</option>
+            <option value="C3">مسار C3 الاعتيادي</option>
+            <option value="C4">مسار C4 رباعي الكربون (Kranz)</option>
+            <option value="CAM/Facultative">CAM / تكيف ملحي متخصص</option>
+          </select>
+
+          <select id="atlas-filter-habit" onchange="filterAtlas()" class="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <option value="all">الهيئة المورفولوجية (Habit)</option>
+            <option value="شجرة">أشجار معمرة (Trees)</option>
+            <option value="شجيرة">شجيرات صحراوية (Shrubs)</option>
+            <option value="عشبي معمر">أعشاب متخشبة (Suffrutescent)</option>
+          </select>
+
+          <button onclick="resetAtlasFilters()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="إعادة تعيين الفلاتر">
+            <i class="fa-solid fa-arrow-rotate-right"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Plants Grid with Rich High-Res Photography -->
+      <div id="species-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2: PHYLOGENOMICS & APG IV EVOLUTIONARY TREE
+         ====================================================================== -->
+    <section id="view-phylogeny" class="tab-view hidden space-y-6">
+      
+      <!-- Phylogenomics Top Banner -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">شجرة السلالات الجزيئية لكاسيات البذور بوادي العقيق</h2>
+            <button onclick="openGlossaryModal('APG_IV')" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
+              <span>APG IV System</span>
+              <i class="fa-solid fa-circle-info text-[9px]"></i>
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            إعادة بناء التفرع التطوري لفلورا الحوض الرسوبي لوادي العقيق مبنية على تحليل أقصى احتمالية (Maximum Likelihood) لجينات الكلوروبلاست <span class="sci-term" onclick="openGlossaryModal('rbcL')">rbcL</span> و <span class="sci-term" onclick="openGlossaryModal('matK')">matK</span>.
+          </p>
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-mono">
+            <button onclick="zoomPhylo(1.15)" class="p-1.5 px-2.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="تكبير">+</button>
+            <button onclick="zoomPhylo(0.85)" class="p-1.5 px-2.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="تصغير">-</button>
+            <button onclick="resetPhyloZoom()" class="p-1.5 px-2.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="إعادة تعيين"><i class="fa-solid fa-arrows-rotate text-[10px]"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phylogeny Interactive Canvas & Details Split View -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Interactive Vector Cladogram -->
+        <div class="lg:col-span-8 bg-slate-900 rounded-2xl p-5 border border-slate-800 overflow-hidden relative min-h-[500px] flex items-center justify-center shadow-inner">
+          <svg id="cladogram-svg" viewBox="0 0 860 480" class="w-full h-auto max-h-[520px] transition-transform duration-200 select-none">
+            <!-- Geological Timeline Axes -->
+            <line x1="70" y1="35" x2="800" y2="35" stroke="#334155" stroke-width="1" stroke-dasharray="3" />
+            <text x="70" y="24" fill="#64748b" font-size="10" font-family="JetBrains Mono" text-anchor="middle">~138 MYA (العصر الطباشيري المبكر)</text>
+            <text x="310" y="24" fill="#64748b" font-size="10" font-family="JetBrains Mono" text-anchor="middle">~115 MYA</text>
+            <text x="540" y="24" fill="#64748b" font-size="10" font-family="JetBrains Mono" text-anchor="middle">~78 MYA</text>
+            <text x="780" y="24" fill="#10b981" font-size="10" font-family="JetBrains Mono" text-anchor="middle">الأصناف المعاصرة (Extant)</text>
+
+            <!-- Trunk: Angiosperms Root -->
+            <path d="M 70 240 L 190 240" stroke="#10b981" stroke-width="3" fill="none" />
+            <circle cx="70" cy="240" r="6" fill="#10b981" class="cursor-pointer hover:r-8 transition-all" onclick="showPhyloNode('Angiosperms')" />
+            <text x="70" y="262" fill="#94a3b8" font-size="10" font-family="IBM Plex Sans Arabic" text-anchor="middle">كاسيات البذور (Angiosperms)</text>
+
+            <!-- Eudicots Diversification -->
+            <path d="M 190 240 L 190 140 L 310 140" stroke="#10b981" stroke-width="2.5" fill="none" />
+            <path d="M 190 240 L 190 340 L 310 340" stroke="#10b981" stroke-width="2.5" fill="none" />
+            <circle cx="190" cy="240" r="5" fill="#047857" class="cursor-pointer" onclick="showPhyloNode('Eudicots')" />
+            <text x="185" y="230" fill="#a7f3d0" font-size="10" font-family="JetBrains Mono" text-anchor="end">Eudicots (ذوات الفلقتين)</text>
+
+            <!-- Clade 1: Rosids Branch -->
+            <path d="M 310 140 L 440 140" stroke="#34d399" stroke-width="2" fill="none" />
+            <circle cx="310" cy="140" r="4.5" fill="#34d399" class="cursor-pointer" onclick="showPhyloNode('Rosids')" />
+            <text x="310" y="128" fill="#6ee7b7" font-size="10" font-family="JetBrains Mono" text-anchor="middle">Rosids</text>
+
+            <!-- Fabids Sub-branch -->
+            <path d="M 440 140 L 440 85 L 560 85" stroke="#6ee7b7" stroke-width="2" fill="none" />
+            <circle cx="440" cy="85" r="4" fill="#10b981" class="cursor-pointer" onclick="showPhyloNode('Fabids')" />
+            <text x="440" y="75" fill="#94a3b8" font-size="9" font-family="JetBrains Mono">Fabids</text>
+
+            <!-- Vachellia tortilis leaf -->
+            <path d="M 560 85 L 560 60 L 680 60" stroke="#cbd5e1" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="60" r="5" fill="#f59e0b" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('vachellia')" />
+            <text x="695" y="64" fill="#fbbf24" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">السمر (Vachellia tortilis)</text>
+
+            <!-- Ziziphus spina-christi leaf -->
+            <path d="M 560 85 L 560 110 L 680 110" stroke="#cbd5e1" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="110" r="5" fill="#f59e0b" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('ziziphus')" />
+            <text x="695" y="114" fill="#fbbf24" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">السدر البري (Ziziphus spina-christi)</text>
+
+            <!-- Malvids / Brassicales: Salvadora -->
+            <path d="M 440 140 L 440 165 L 680 165" stroke="#6ee7b7" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="165" r="5" fill="#60a5fa" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('salvadora')" />
+            <text x="695" y="169" fill="#93c5fd" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">الأراك (Salvadora persica)</text>
+
+            <!-- Clade 2: Superasterids / Asterids / Caryophyllales / Zygophyllales -->
+            <path d="M 310 340 L 450 340" stroke="#818cf8" stroke-width="2" fill="none" />
+            <circle cx="310" cy="340" r="4.5" fill="#818cf8" class="cursor-pointer" onclick="showPhyloNode('Superasterids')" />
+            <text x="310" y="360" fill="#a5b4fc" font-size="10" font-family="JetBrains Mono" text-anchor="middle">Superasterids / Core Clades</text>
+
+            <!-- Calotropis (Gentianales / Asterids) -->
+            <path d="M 450 340 L 450 250 L 680 250" stroke="#c084fc" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="250" r="5" fill="#c084fc" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('calotropis')" />
+            <text x="695" y="254" fill="#e9d5ff" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">العُشر (Calotropis procera)</text>
+
+            <!-- Haloxylon (Caryophyllales) -->
+            <path d="M 450 340 L 450 320 L 680 320" stroke="#f472b6" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="320" r="5" fill="#f472b6" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('haloxylon')" />
+            <text x="695" y="324" fill="#fbcfe8" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">الرمث (Haloxylon salicornicum)</text>
+
+            <!-- Peganum (Nitrariaceae / Sapindales) -->
+            <path d="M 450 340 L 450 385 L 680 385" stroke="#fb7185" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="385" r="5" fill="#fb7185" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('peganum')" />
+            <text x="695" y="389" fill="#fecdd3" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">الحرمل (Peganum harmala)</text>
+
+            <!-- Fagonia (Zygophyllales) -->
+            <path d="M 450 340 L 450 440 L 680 440" stroke="#fb923c" stroke-width="1.5" fill="none" />
+            <circle cx="680" cy="440" r="5" fill="#fb923c" class="cursor-pointer hover:r-7 transition" onclick="selectPlantFromPhylo('fagonia')" />
+            <text x="695" y="444" fill="#ffedd5" font-size="11" font-family="IBM Plex Sans Arabic" font-weight="600">الشكاعة (Fagonia indica)</text>
+          </svg>
+        </div>
+
+        <!-- Node & Lineage Evolutionary Diagnostic Panel -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="text-xs font-mono text-slate-400">التوصيف الفيلوجيني الدقيق</span>
+              <span id="node-tag" class="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">عقدة تطورية</span>
+            </div>
+
+            <div class="mt-4 space-y-3">
+              <h3 id="node-title" class="text-lg font-bold text-slate-900 dark:text-white">كاسيات البذور (Angiosperms)</h3>
+              <p id="node-desc" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                انفصلت النباتات الزهرية قبل ما يقارب 138 مليون سنة خلال العصر الطباشيري. طورت أجهزة وعائية متقدمة وبذوراً محمية بمبايض شكلت سر تفوقها التنافسي في بيئات وادي العقيق البركانية والحصوية.
+              </p>
+            </div>
+
+            <div class="mt-5 space-y-2 text-xs">
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex justify-between items-center">
+                <span class="text-slate-500">زمن التباعد التقديري:</span>
+                <span id="node-age" class="font-mono font-semibold text-slate-800 dark:text-slate-200">~135 - 140 MYA</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex justify-between items-center">
+                <span class="text-slate-500">دعم الثقة الفيلوجيني:</span>
+                <span id="node-support" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Bootstrap: 100% (ML)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex justify-between items-center">
+                <span class="text-slate-500">السمات التطورية المشتركة:</span>
+                <span id="node-synapomorphy" class="font-semibold text-slate-700 dark:text-slate-200">الإخصاب المزدوج وغطاء البذور</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <button onclick="switchTab('atlas')" class="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-seedling text-brand-500"></i>
+              <span>استكشاف النوع في أطلس الصور والمورفولوجيا</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================================
+         TAB 3: GENOMICS & DNA BARCODE STUDIO
+         ====================================================================== -->
+    <section id="view-genomics" class="tab-view hidden space-y-6">
+      
+      <!-- Studio Control Bar -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        
+        <!-- Target Species Selector -->
+        <div class="flex items-center gap-3">
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">العينة المستهدفة:</label>
+          <select id="genomic-species-select" onchange="loadGenomicsData(this.value)" class="text-xs font-semibold px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <!-- Marker Switcher (rbcL vs matK) & Translation Mode -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-semibold text-slate-500">المؤشر الجزيئي:</span>
+            <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold">
+              <button id="locus-btn-rbcl" onclick="setMarker('rbcL')" class="px-3 py-1 rounded-lg bg-brand-600 text-white shadow-sm transition">rbcL</button>
+              <button id="locus-btn-matk" onclick="setMarker('matK')" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-brand-600 transition">matK</button>
+            </div>
+          </div>
+
+          <button onclick="toggleTranslationMode()" id="btn-toggle-translation" class="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-arrows-rotate text-brand-500"></i>
+            <span id="trans-btn-label">عرض كـ أحماض أمينية (AA)</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Genomic KPI Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-mono">طول التسلسل المشفر</span>
+            <span class="text-slate-400 text-xs"><i class="fa-solid fa-ruler-horizontal"></i></span>
+          </div>
+          <span id="metric-len" class="text-xl font-bold font-mono text-slate-900 dark:text-white mt-1 block">552 bp</span>
+          <span class="text-[10px] text-brand-600 dark:text-brand-400 mt-0.5 block">Chloroplast Coding region</span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="sci-term text-[11px] text-slate-400 font-mono" onclick="openGlossaryModal('GC_content')">محتوى GC %</span>
+            <span class="text-slate-400 text-xs"><i class="fa-solid fa-chart-pie"></i></span>
+          </div>
+          <span id="metric-gc" class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">43.8%</span>
+          <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
+            <div id="metric-gc-bar" class="bg-emerald-500 h-full rounded-full" style="width: 43.8%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-mono">معرف NCBI GenBank</span>
+            <span class="text-slate-400 text-xs"><i class="fa-solid fa-database"></i></span>
+          </div>
+          <span id="metric-acc" class="text-sm font-bold font-mono text-slate-900 dark:text-white mt-1.5 block">MT892104.1</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Verified Chloroplast Locus</span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-mono">البادئات المعتمدة (Primers)</span>
+            <span class="text-slate-400 text-xs"><i class="fa-solid fa-vial"></i></span>
+          </div>
+          <span id="metric-primers" class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1.5 block">rbcLa-F / rbcLa-R</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">CBOL Standard Barcode</span>
+        </div>
+      </div>
+
+      <!-- DNA Digital Barcode Strip & Plastome Visual Architecture -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Barcode Blocks -->
+        <div class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>المصفوفة الرقمية للباركود الجيني (Digital DNA Barcode)</span>
+                <span id="translation-indicator" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">Nucleotide Mode</span>
+              </h3>
+              <p class="text-xs text-slate-500">تمثيل بصري لموقع أول 60 نيوكليوتيدة مع التلوين القياسي</p>
+            </div>
+
+            <!-- Color Palette Legend -->
+            <div id="barcode-legend" class="flex items-center gap-2 text-[11px] font-mono font-bold">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">A = أدينين</span>
+              <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">T = ثايمين</span>
+              <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">C = سايتوسين</span>
+              <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">G = جوانين</span>
+            </div>
+          </div>
+
+          <!-- The Matrix Visual -->
+          <div id="barcode-visual-strip" class="grid grid-cols-10 sm:grid-cols-15 md:grid-cols-20 gap-1.5 p-3.5 bg-slate-950 rounded-xl border border-slate-800 font-mono text-center text-xs">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono pt-2">
+            <span>Base 1-20</span>
+            <span>Base 21-40</span>
+            <span>Base 41-60</span>
+          </div>
+        </div>
+
+        <!-- Right: Plastome Circular Structural Map -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-notch text-emerald-500"></i>
+                <span>هيكل جينوم البلاستيدات الخضراء</span>
+              </span>
+              <span class="sci-term text-[10px] font-mono text-slate-400" onclick="openGlossaryModal('Plastome')">Plastome</span>
+            </div>
+
+            <!-- Plastome SVG Map Representation -->
+            <div class="my-4 flex items-center justify-center">
+              <svg viewBox="0 0 200 200" class="w-36 h-36">
+                <!-- Outer Plastome ring -->
+                <circle cx="100" cy="100" r="75" fill="none" stroke="#1e293b" stroke-width="14" />
+                <!-- LSC (Large Single Copy) - ~85 kb -->
+                <circle cx="100" cy="100" r="75" fill="none" stroke="#10b981" stroke-width="14" stroke-dasharray="280 471" stroke-dashoffset="0" />
+                <!-- IRb (Inverted Repeat B) - ~25 kb -->
+                <circle cx="100" cy="100" r="75" fill="none" stroke="#f59e0b" stroke-width="14" stroke-dasharray="80 471" stroke-dashoffset="-280" />
+                <!-- SSC (Small Single Copy) - ~18 kb -->
+                <circle cx="100" cy="100" r="75" fill="none" stroke="#3b82f6" stroke-width="14" stroke-dasharray="60 471" stroke-dashoffset="-360" />
+                <!-- IRa (Inverted Repeat A) - ~25 kb -->
+                <circle cx="100" cy="100" r="75" fill="none" stroke="#f59e0b" stroke-width="14" stroke-dasharray="80 471" stroke-dashoffset="-420" />
+                <!-- Center Info -->
+                <text x="100" y="96" fill="#64748b" font-size="9" font-family="JetBrains Mono" text-anchor="middle">Plastome</text>
+                <text x="100" y="112" fill="#10b981" font-size="12" font-weight="bold" font-family="JetBrains Mono" text-anchor="middle">~155 kb</text>
+              </svg>
+            </div>
+
+            <div class="space-y-1.5 text-[11px] font-mono">
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> LSC (Large Single Copy)</span>
+                <span>~85,000 bp</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> IR (Inverted Repeats a/b)</span>
+                <span>~2 × 25,000 bp</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> SSC (Small Single Copy)</span>
+                <span>~18,000 bp</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-slate-400 mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 leading-normal">
+            * موقع جين <span class="sci-term" onclick="openGlossaryModal('rbcL')">rbcL</span> يقع ضمن منطقة LSC بينما يقع جين <span class="sci-term" onclick="openGlossaryModal('matK')">matK</span> داخل إنترون جين trnK في نفس المنطقة.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- FASTA Sequence Viewer & Stress Gene Molecular Battery -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- FASTA Code Box -->
+        <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-3 shadow-sm">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-2 font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <i class="fa-solid fa-code text-brand-500"></i>
+              <span>تسلسل النيوكليوتيدات بصيغة FASTA القياسية</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="copyFasta()" class="px-2.5 py-1 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-regular fa-copy"></i>
+                <span>نسخ التسلسل</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+            <pre id="fasta-display" class="font-mono text-xs text-brand-400 whitespace-pre leading-relaxed select-all">
+              <!-- Filled via JS -->
+            </pre>
+          </div>
+
+          <p class="text-[11px] text-slate-400 font-mono">
+            * معتمد دولياً لدى Consortium for the Barcode of Life (CBOL) للتشخيص النباتي السريع.
+          </p>
+        </div>
+
+        <!-- Functional Stress Adaptive Genes -->
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-dna text-purple-500"></i>
+              <span>جينات مقاومة الإجهادات الحيوية والحرارة</span>
+            </h4>
+            <span class="text-[10px] font-mono text-slate-400">Functional Loci</span>
+          </div>
+
+          <div class="space-y-2.5" id="functional-genes-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================================
+         TAB 4: COMPARATIVE ANALYSIS (MULTI-TAXA MATRIX)
+         ====================================================================== -->
+    <section id="view-compare" class="tab-view hidden space-y-6">
+      
+      <!-- Selector Header -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white">المصفوفة التحليلية المقارنة لفلورا حوض وادي العقيق</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مقارنة فسيولوجية وجينومية وتكيفية دقيقة بين 3 أصناف في وقت واحد</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <!-- Specimen 1 -->
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">العينة الأولى (Taxon A):</label>
+            <select id="compare-select-1" onchange="runComparison()" class="w-full text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <!-- Specimen 2 -->
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">العينة الثانية (Taxon B):</label>
+            <select id="compare-select-2" onchange="runComparison()" class="w-full text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <!-- Specimen 3 -->
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">العينة الثالثة (Taxon C):</label>
+            <select id="compare-select-3" onchange="runComparison()" class="w-full text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <!-- Populated via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Side-by-Side Deep Matrix Table -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-800/70 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold">
+              <tr>
+                <th class="p-4 w-1/4">المعيار البيولوجي / الجينومي</th>
+                <th class="p-4 w-1/4 text-brand-700 dark:text-brand-300" id="cmp-name-1">Taxon A</th>
+                <th class="p-4 w-1/4 text-purple-700 dark:text-purple-300" id="cmp-name-2">Taxon B</th>
+                <th class="p-4 w-1/4 text-amber-700 dark:text-amber-300" id="cmp-name-3">Taxon C</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300" id="cmp-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================
+         TAB 5: SCIENTIFIC GLOSSARY & INTERACTIVE CONCEPT ENCYCLOPEDIA
+         ====================================================================== -->
+    <section id="view-glossary" class="tab-view hidden space-y-6">
+      
+      <!-- Glossary Header & Search -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-book-atlas text-brand-500"></i>
+            <span>معجم المصطلحات الجينومية والتطورية المتخصصة</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            دليل أكاديمي محكّم يوضح كل المفاهيم الجزيئية والمورفولوجية الواردة بالمنصة، ودورها الحيوي في بيئة وادي العقيق.
+          </p>
+        </div>
+
+        <div class="relative w-full md:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input 
+            type="text" 
+            id="glossary-search" 
+            oninput="filterGlossary()" 
+            placeholder="بحث في المصطلحات..." 
+            class="w-full pr-9 pl-4 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"
+          >
+        </div>
+      </div>
+
+      <!-- Glossary Card Grid -->
+      <div id="glossary-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       MODAL 1: RICH SPECIMEN COMPREHENSIVE DOSSIER (DRAWER)
+       ====================================================================== -->
+  <div id="plant-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-3xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      
+      <!-- Drawer Header with Plant Photo Banner -->
+      <div class="relative h-44 sm:h-52 w-full overflow-hidden bg-slate-950">
+        <img id="drawer-img" src="" alt="" class="w-full h-full object-cover opacity-80 transition duration-500">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        
+        <button onclick="closeDrawer()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+
+        <div class="absolute bottom-4 right-5 text-white">
+          <span id="drawer-family" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-brand-600/90 text-white font-semibold shadow">Family</span>
+          <h3 id="drawer-name" class="text-xl sm:text-2xl font-bold mt-1.5 text-white">اسم النبتة</h3>
+          <p id="drawer-sci" class="text-xs sm:text-sm font-mono italic text-slate-300">Scientific Name</p>
+        </div>
+      </div>
+
+      <!-- Drawer Nav Tabs -->
+      <div class="flex border-b border-slate-200 dark:border-slate-800 px-6 bg-slate-50 dark:bg-slate-850 text-xs font-semibold gap-4">
+        <button onclick="switchDrawerSubTab('botany')" id="dtab-botany" class="py-3 border-b-2 border-brand-500 text-brand-600 dark:text-brand-400">الوصف المورفولوجي والبيئي</button>
+        <button onclick="switchDrawerSubTab('genomics')" id="dtab-genomics" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white">الجينوم ومؤشرات DNA</button>
+        <button onclick="switchDrawerSubTab('metabolites')" id="dtab-metabolites" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white">الأيض الثانوي والمسارات</button>
+      </div>
+
+      <!-- Drawer Body Content -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs flex-1">
+        
+        <!-- Tab 1: Botany & Morphology -->
+        <div id="dcontent-botany" class="space-y-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-400 block text-[10px]">الفرع التطوري (Clade)</span>
+              <span id="drawer-clade" class="font-mono font-bold text-slate-800 dark:text-slate-200 text-xs mt-0.5 block">-</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-400 block text-[10px]">الرتبة (Order)</span>
+              <span id="drawer-order" class="font-mono font-bold text-slate-800 dark:text-slate-200 text-xs mt-0.5 block">-</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-400 block text-[10px]">مسار التمثيل الضوئي</span>
+              <span id="drawer-photosyn" class="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs mt-0.5 block">-</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5">
+            <span class="font-bold text-brand-700 dark:text-brand-300 block text-xs">التوزيع الجغرافي والبيئي في حوض وادي العقيق:</span>
+            <p id="drawer-habitat" class="text-slate-600 dark:text-slate-300 leading-relaxed text-xs"></p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5">
+            <span class="font-bold text-emerald-700 dark:text-emerald-400 block text-xs">التحورات التشريحية والفسيولوجية لمجابهة الجفاف:</span>
+            <p id="drawer-adaptations" class="text-slate-600 dark:text-slate-300 leading-relaxed text-xs"></p>
+          </div>
+        </div>
+
+        <!-- Tab 2: Genomics Details -->
+        <div id="dcontent-genomics" class="hidden space-y-4">
+          <div class="grid grid-cols-2 gap-3 font-mono">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-400 block text-[10px]">GenBank Accession:</span>
+              <span id="drawer-accession" class="font-bold text-slate-800 dark:text-slate-200 mt-1 block"></span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-400 block text-[10px]">محتوى GC Content:</span>
+              <span id="drawer-gc" class="font-bold text-emerald-600 dark:text-emerald-400 mt-1 block"></span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+            <span class="font-bold text-purple-700 dark:text-purple-400 block">الجينات الوظيفية المرصودة (Stress Loci):</span>
+            <div id="drawer-stress-genes" class="space-y-1.5"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Metabolomics -->
+        <div id="dcontent-metabolites" class="hidden space-y-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+            <span class="font-bold text-amber-700 dark:text-amber-400 block">المركبات الفعالة ونواتج الأيض الثانوي:</span>
+            <p id="drawer-metabolites" class="text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+            <span class="font-bold text-indigo-700 dark:text-indigo-400 block">المسارات الكيميائية الحيوية المرتبطة (Bio-Pathways):</span>
+            <p id="drawer-pathways" class="text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+        <button onclick="inspectInGenomics()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition flex items-center gap-2">
+          <i class="fa-solid fa-dna"></i>
+          <span>فتح في مستعرض الباركود الجيني</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: SCIENTIFIC GLOSSARY DETAIL POPUP
+       ====================================================================== -->
+  <div id="glossary-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
+      
+      <div class="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <span id="gmodal-category" class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold border border-brand-200 dark:border-brand-800">Biotechnology</span>
+          <h3 id="gmodal-term" class="text-lg font-bold text-slate-900 dark:text-white mt-1">مصطلح علمي</h3>
+          <p id="gmodal-en" class="text-xs font-mono text-slate-400">Scientific English Term</p>
+        </div>
+        <button onclick="closeGlossaryModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs leading-relaxed">
+        <div>
+          <span class="font-bold text-slate-800 dark:text-slate-200 block mb-1">التعريف العلمي الدقيق:</span>
+          <p id="gmodal-def" class="text-slate-600 dark:text-slate-300"></p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-1">
+          <span class="font-bold text-brand-700 dark:text-brand-300 block">الأهمية في التقنية الحيوية والبيولوجيا الجزيئية:</span>
+          <p id="gmodal-biotech" class="text-slate-600 dark:text-slate-300"></p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-1">
+          <span class="font-bold text-emerald-800 dark:text-emerald-300 block">التطبيق في بيئة وفلورا وادي العقيق:</span>
+          <p id="gmodal-aqiq" class="text-slate-700 dark:text-slate-300"></p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+        <button onclick="closeGlossaryModal()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold">
+          إغلاق
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 bg-slate-900 border border-slate-800 text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 pointer-events-none font-sans">
+    <i class="fa-solid fa-circle-check text-brand-400"></i>
+    <span id="toast-text">تمت العملية بنجاح</span>
+  </div>
+
+  <!-- ======================================================================
+       APPLICATION DATA & LOGIC JAVASCRIPT
+       ====================================================================== -->
+  <script>
+    /* =========================================================================
+       1. EXTENSIVE SCIENTIFIC DATABASE: FLORA OF WADI AL-AQIQ
+       ========================================================================= */
+    const speciesDB = [
+      {
+        id: "vachellia",
+        arabicName: "السَّمُر (الطلح)",
+        sciName: "Vachellia tortilis",
+        synonym: "Acacia tortilis subsp. raddiana",
+        family: "Fabaceae",
+        clade: "Fabids (Rosids)",
+        order: "Fabales",
+        habit: "شجرة",
+        photosynthesis: "C3",
+        photoUrl: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=800&q=80",
+        habitat: "المدرجات الحصوية، مجاري السيول الرسوبية العميقة، وحواف لابات الحرة الشرقية والغربية لوادي العقيق.",
+        adaptations: "نظام جذر وتدي عميق يصل لأكثر من 18 متراً للوصول للمياه الجوفية، أوراق دقيقة ريشية مضاعفة ومتحورة لتقليل التبخر، وإفراز صمغ بوليمري معقد لحماية الأنسجة الوعائية.",
+        metabolites: "التانينات المكثفة (Proanthocyanidins)، الكاتيشين، الفلافونويدات المانعة للأكسدة، وسكريات الأرابينوجالاكتان المتفرعة.",
+        pathways: "مسار الشيكيمات (Shikimate pathway) لتخليق المركبات الفينولية الدفاعية، ومسارات البوليفينول المقاومة للرعي والأشعة فوق البنفسجية UV-B.",
+        gcContent: "43.6%",
+        lengthBp: 552,
+        accession: "MT892104.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "DREB2A", role: "عامل نسخ استجابة الجفاف والحرارة العالية" },
+          { name: "Hsp70", role: "بروتين صدمة حرارية لحماية البنية الثلاثية للإنزيمات" },
+          { name: "NodD", role: "تنظيم جينات التثبيت التكافلي للنيتروجين بالتربة الرملية الفقيرة" },
+          { name: "LEA3", role: "بروتين الطور الجنيني المتأخر لمنع تلف السيتوبلازم" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAGACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTTAAAGAGTACAAATTGACCTATTATACTCCTGAATATGAAACCAAGGATACTGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCTGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTGTGGACCGATGGACTTACC",
+          matK: "ATGGAACCTTCTTATTTTCATTTTTTATTCCCTTTTTTGAAGAGAAAAAGACATATTGATATTTTTATCGGTCCCAACCCAGACTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTAGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "ziziphus",
+        arabicName: "السِّدْر البري",
+        sciName: "Ziziphus spina-christi",
+        synonym: "Rhamnus spina-christi",
+        family: "Rhamnaceae",
+        clade: "Fabids (Rosids)",
+        order: "Rosales",
+        habit: "شجرة",
+        photosynthesis: "C3",
+        photoUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
+        habitat: "الرواسب الفيضية العميقة لبطن وادي العقيق وقيعان المنخفضات الرسوبية الرطبة المحيطة بسد العقيق.",
+        adaptations: "طبقة كيوتيكل شمعية كارهة للماء ذات كفاءة انعكاس إشعاعي عالية، نظام أشواك مزدوج مستقيم ومعقوف، وقدرة امتصاص مائي عند جهد أسموزي فائق الانخفاض (-3.5 MPa).",
+        metabolites: "قلويدات السايكلوببتيد (Ziziphine)، سابونينات الترايتيربين (Christinin A-D)، والفلافونويدات المضادة للتأكسد الخلوي.",
+        pathways: "مسار حمض الميفالونات (Mevalonate Pathway) لإنتاج السابونينات، ومسار الفينيل بروبانويد لحماية الأغشية الثايلاكويدية.",
+        gcContent: "44.2%",
+        lengthBp: 555,
+        accession: "OM319802.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "SOS1", role: "مضخة طرد الصوديوم الغشائية لتحمل ملوحة الرواسب" },
+          { name: "PAL", role: "إنزيم فينيل ألانين أمونيا لاياز لبدء مضادات الأكسدة" },
+          { name: "APX1", role: "أسكوربات بيروكسيداز لمعادلة الجذور الحرة بالأوراق" },
+          { name: "PIP2;2", role: "أكوابورين منظم لنفاذية الماء أثناء الجفاف الصيفي" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAAACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTCAAAGATTATAAATTGACTTATTATACCCCGGAGTACGAAACCAAGGACACTGATATCTTGGCAGCATTCCGAGTAACCCCTCAACCTGGAGTTCCACCCGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTATGGACCGATGGACTTACC",
+          matK: "ATGGAACCTCCTTATTTTCATTTTTTATTCCCTTTTTTAAAGAGAGAAAGACATATTGATATTTTTATCGGTCCCAACCCAGATTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTGGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "calotropis",
+        arabicName: "العُشَر",
+        sciName: "Calotropis procera",
+        synonym: "Asclepias procera",
+        family: "Apocynaceae",
+        clade: "Asterids",
+        order: "Gentianales",
+        habit: "شجيرة",
+        photosynthesis: "C3",
+        photoUrl: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+        habitat: "أطراف الأودية الرسوبية المفتوحة، الترب الرملية الخشنة المعرضة للرياح الساخنة والتأثيرات البشرية.",
+        adaptations: "أوراق شحمية سميكة مغطاة بشمع أبيض عاكس للإشعاع الشمسي، نظام لاتكس حليبي يحتوي كاردينوليدات سامة تمنع الرعي والتبخر.",
+        metabolites: "الكاردينوليدات القلبية (Calotropin, Uscharin, Calactin)، وألياف سليلوزية متناهية الصغر فائقة الكراهة للماء في البذور.",
+        pathways: "تخليق الستيرويدات القلبية عبر مسار الكوليسترول ومسار الإيزوبرينويد المتخصص لحماية الأوراق من الحشرات.",
+        gcContent: "42.8%",
+        lengthBp: 549,
+        accession: "KX447812.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "PIP2;1", role: "قنوات أكوابورين لتنظيم الجهد المائي الضاغط" },
+          { name: "Cu/Zn-SOD", role: "معادلة أيونات السوبرأوكسيد الناتجة عن الإشعاع الفائق" },
+          { name: "Latex-PR10", role: "بروتين دفاعي متعدد الوظائف ضد الميكروبات" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAAACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTTAAAGAGTACAAATTGACCTATTATACTCCTGAATACGAAACCAAAGATACTGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCTGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTGTGGACCGATGGACTTACC",
+          matK: "ATGGAACCTTCTTATTTTCATTTTTTATTCCCTTTTTTGAAGAGAAAAAGACATATTGATATTTTTATCGGTCCCAACCCAGACTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTAGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "salvadora",
+        arabicName: "الأَرَاك (السواك)",
+        sciName: "Salvadora persica",
+        synonym: "Salvadora persica var. persica",
+        family: "Salvadoraceae",
+        clade: "Malvids (Rosids)",
+        order: "Brassicales",
+        habit: "شجيرة",
+        photosynthesis: "CAM/Facultative",
+        photoUrl: "https://images.unsplash.com/photo-1546842931-886c185b4c8c?auto=format&fit=crop&w=800&q=80",
+        habitat: "المنخفضات الطمية ذات الملوحة الخفيفة ومجاري السيول الرملية على امتداد وادي العقيق وبئر عروة.",
+        adaptations: "نبات ملحي اختياري (Facultative Halophyte) يخزن كلوريد الصوديوم في فجوات متخصصة دون الإضرار بالبروتوبلازم، أوراق جلدية ممتلئة.",
+        metabolites: "قلويد السلفادورين (Salvadorine)، ثلاثي ميثيل أمين، بلورات السيليكا العضوية، مركبات الثيوسيانات والفلورايد الطبيعي.",
+        pathways: "مسار الجلوكوسينولات (Glucosinolate pathway) الدفاعي المضاد للبكتيريا ومسار تخليق البيتين لحفظ التوازن الهيدروليكي.",
+        gcContent: "43.1%",
+        lengthBp: 552,
+        accession: "HQ659114.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "NHX1", role: "مضخة تبادل صوديوم/هيدروجين الفجوية لعزل الأملاح" },
+          { name: "BADH", role: "إنزيم تخليق الجلايسين بيتين كحامٍ أسموزي رئيسي" },
+          { name: "SpHKT1", role: "ناقل انتقائي للبوتاسيوم لمنع التسمم بالصوديوم" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAAACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTCAAAGATTATAAATTGACTTATTATACCCCGGAGTACGAAACCAAGGACACTGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCCGGAGTTCCACCCGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTATGGACCGATGGACTTACC",
+          matK: "ATGGAACCTCCTTATTTTCATTTTTTATTCCCTTTTTTAAAGAGAGAAAGACATATTGATATTTTTATCGGTCCCAACCCAGATTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTGGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "peganum",
+        arabicName: "الحَرْمَل",
+        sciName: "Peganum harmala",
+        synonym: "Peganum harmala L.",
+        family: "Nitrariaceae",
+        clade: "Sapindales (Rosids)",
+        order: "Sapindales",
+        habit: "عشبي معمر",
+        photosynthesis: "C3",
+        photoUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=800&q=80",
+        habitat: "الأراضي الرسوبية المشوهة بيئياً والسهول الحصوية المرتفعة ومجاري مياه الصرف القديمة في حوض العقيق.",
+        adaptations: "أوراق مقسمة إلى فصوص خيطية ضيقة تقلل مساحة الاستقبال الحراري بنسبة 70%، نظام جذري متين ينتج مركبات أليلوباثية طاردة للمنافسين.",
+        metabolites: "قلويدات البيتا-كاربينولين (Harmine, Harmaline, Harmalol)، الفلافونويدات المشتقة من الكيمبفيرول.",
+        pathways: "مسار التربتوفان (Tryptophan-derived alkaloid pathway) لتصنيع القلويدات المانعة للرعي والحشرات.",
+        gcContent: "43.9%",
+        lengthBp: 552,
+        accession: "NC_024299.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "TDC", role: "تربتوفان ديكاربوكسيلاز لبدء الدفاع القلويدي" },
+          { name: "P5CS", role: "إنزيم تخليق البرولين الحاسم لمقاومة الجفاف" },
+          { name: "CAT1", role: "الكاتاليز لتفكيك فوق أكسيد الهيدروجين" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAAACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTTAAAGAGTACAAATTGACCTATTATACTCCTGAATACGAAACCAAGGATACTGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCTGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTGTGGACCGATGGACTTACC",
+          matK: "ATGGAACCTTCTTATTTTCATTTTTTATTCCCTTTTTTGAAGAGAAAAAGACATATTGATATTTTTATCGGTCCCAACCCAGACTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTAGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "haloxylon",
+        arabicName: "الرِّمْث",
+        sciName: "Haloxylon salicornicum",
+        synonym: "Hammada elegans",
+        family: "Amaranthaceae",
+        clade: "Caryophyllales",
+        order: "Caryophyllales",
+        habit: "شجيرة",
+        photosynthesis: "C4",
+        photoUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+        habitat: "السهول الرملية الحصوية المنبسطة، ومناطق تجمع مياه السيول التبخيرية بحوض وادي العقيق الجنوبي.",
+        adaptations: "تمثيل ضوئي C4 فائق الكفاءة بتشريح كرانز (Kranz Anatomy)، اختزال كامل للأوراق إلى حراشف لحمية صغيرة ملتحمة بالأفرع الخضراء.",
+        metabolites: "أملاح البوتاسيوم والأوكزالات العضوية، جلايسين بيتين، قلويدات البيبيريدين (Haloxynine).",
+        pathways: "مسار C4 NAD-malic enzyme لتثبيت ثاني أكسيد الكربون الليلي مع إغلاق الثغور نهاراً، ومسار حفظ الضغط الإسموزي.",
+        gcContent: "42.5%",
+        lengthBp: 550,
+        accession: "MK901844.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "PEPC", role: "تثبيت الكربون الليلي عالي الكفاءة بمسار C4" },
+          { name: "AVP1", role: "مضخة بيروفوسفاتيز لزيادة الضغط الجذري الماص" },
+          { name: "Osmotin", role: "بروتين المقاومة الأسموزية الفائقة للملوحة" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAAACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTTAAAGATTATAAATTGACCTATTATACTCCTGAATACGAAACCAAGGATACTGATATCTTGGCAGCATTCCGAGTAACCCCTCAACCTGGAGTTCCACCTGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTGTGGACCGATGGACTTACC",
+          matK: "ATGGAACCTCCTTATTTTCATTTTTTATTCCCTTTTTTGAAGAGAAAAAGACATATTGATATTTTTATCGGTCCCAACCCAGATTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTGGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      },
+      {
+        id: "fagonia",
+        arabicName: "الشُّكَاعَة (الشويكة)",
+        sciName: "Fagonia indica",
+        synonym: "Fagonia bruguieri DC.",
+        family: "Zygophyllaceae",
+        clade: "Zygophyllales (Rosids)",
+        order: "Zygophyllales",
+        habit: "عشبي معمر",
+        photosynthesis: "C3",
+        photoUrl: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80",
+        habitat: "السفوح البركانية الصلبة لحرات المدينة المنورة المحاذية لمجرى وادي العقيق والتلال المفتتة الجافة.",
+        adaptations: "تحور الأذينات الورقية إلى أشواك حادة ثلاثية، ثغور تنفسية غائرة محاطة بشعيرات دقيقة كارهة للماء لتقليل تدرج ضغط البخار.",
+        metabolites: "جليكوسيدات الترايتيربين الصابونية (Fagonin)، الفلافونويدات (Rutin, Quercetin)، والأحماض الفينولية الواقية.",
+        pathways: "مسار الترايتيربينويد الدفاعي عبر تخليق السكوالين لتقوية الجدران الخلوية ومجابهة الإشعاع الشمسي المرتفع.",
+        gcContent: "43.3%",
+        lengthBp: 552,
+        accession: "KP234105.1",
+        primers: "rbcLa-F / rbcLa-R",
+        stressGenes: [
+          { name: "GST", role: "جلوتاثيون إس-ترانسفيراز لحماية البروتينات من الأكسدة" },
+          { name: "ERD10", role: "بروتين الاستجابة المبكرة للجفاف والحرارة الشديدة" },
+          { name: "Cu/Zn-SOD", role: "إزالة الشوارد الحرة في بلاستيدات الأوراق الجافة" }
+        ],
+        sequences: {
+          rbcL: "ATGTCACCACAAACAGAGACTAAAGCAAGTGTTGGATTCAAAGCTGGTGTTAAAGAGTACAAATTGACCTATTATACTCCTGAATATGAAACCAAGGATACTGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCTGAAGAAGCAGGGGCTGCGGTAGCTGCCGAATCTTCTACTGGTACATGGACAACTGTGTGGACCGATGGACTTACC",
+          matK: "ATGGAACCTTCTTATTTTCATTTTTTATTCCCTTTTTTGAAGAGAAAAAGACATATTGATATTTTTATCGGTCCCAACCCAGACTTTTTTAGATATCCTATTCATTTTCATTTAGTGGAGTATATTTTTTTAGAAAAATTTTATCGGCAACAAACTATTCTTGTTGAAGATTTTTCTGAACGAAGTC"
+        }
+      }
+    ];
+
+    /* =========================================================================
+       2. SCIENTIFIC GLOSSARY ENCYCLOPEDIA (SCIENTIFIC DICTIONARY)
+       ========================================================================= */
+    const scientificGlossary = {
+      "rbcL": {
+        term: "جين rbcL (الروبيسكو)",
+        en: "Ribulose-1,5-bisphosphate carboxylase/oxygenase large subunit",
+        category: "الجينوم والباركود",
+        def: "جين محمول على جينوم الصانعات الخضراء (Plastome) يشفر للوحدة البنائية الكبيرة لإنزيم الروبيسكو المسؤول عن تثبيت غاز CO2 في حلقة كالفن خلال عملية التمثيل الضوئي.",
+        biotech: "يُعد المؤشر الوراثي المعياري الأول لدى التحالف الدولي لباركود الحياة (CBOL). يتميز بسهولة تضخيمه عبر تقنية PCR بفضل وجود مناطق بادئات عامة (Universal Primers) ومحافظته التطورية العالية.",
+        aqiq: "يُستخدم في دراسات فلورا وادي العقيق لتحديد الانتماء العائلي الدقيق والتفريق بين عائلات الفصيلة البقولية والنبقية والحرملية بدقة موثوقة بنسبة 100%."
+      },
+      "matK": {
+        term: "جين matK (الماتوراز)",
+        en: "Maturase K chloroplastic gene",
+        category: "الجينوم والباركود",
+        def: "جين كلوروبلاستي يقع ضمن الإنترون التابع لجين الحمض النووي الناقل trnK. يشفر لإنزيم ماتوراز يشارك في عمليات ربط وتقطيع الحمض النووي الريبي (RNA Splicing).",
+        biotech: "يمتاز بمعدل تطور واستبدال نيوكليوتيدي أسرع بثلاث مرات تقريباً مقارنة بجين rbcL، مما يمنحه دقة تمايزية تصنيفية فائقة (High Resolving Power) على مستوى الأجناس والأنواع المتقاربة.",
+        aqiq: "يسمح بالتمييز الجزيئي الدقيق بين أنواع السنط المختلفة في وادي العقيق والمدينة المنورة (مثل التمييز بين Vachellia tortilis و Vachellia seyal)."
+      },
+      "GC_content": {
+        term: "محتوى القواعد النيتروجينية GC%",
+        en: "Guanine-Cytosine Content Percentage",
+        category: "الفيزياء الحيوية الجزيئية",
+        def: "نسبة قواعد الجوانين والسايتوسين إلى إجمالي القواعد النيتروجينية في تسلسل الحمض النووي. ترتبط قواعد G و C بثلاث روابط هيدروجينية مقابل رابطتين فقط لـ A و T.",
+        biotech: "تحدد هذه النسبة درجة حرارة انصهار الحمض النووي (Tm) واستقراره الترموديناميكي. ارتفاع النسبة يمنح حلزون DNA مقاومة أعلى للتفكك الحراري والتشوه الإشعاعي.",
+        aqiq: "تظهر نباتات وادي العقيق (مثل السدر 44.2% والحرمل 43.9%) نسب GC متزنة تضمن كفاءة استقرار ونسخ جينوم الكلوروبلاست تحت درجات حرارة الصيف التي تتجاوز 46° مئوية."
+      },
+      "APG_IV": {
+        term: "نظام تصنيف كاسيات البذور الرابع (APG IV)",
+        en: "Angiosperm Phylogeny Group IV (2016)",
+        category: "النشوء والتصنيف الجزيئي",
+        def: "نظام تصنيف نباتي عالمي حديث مبني بشكل كامل على البيانات التطورية الجزيئية المستخلصة من تسلسلات جينات الكلوروبلاست والميتوكوندريا والريبوسومات، متجاوزاً التصانيف المورفولوجية القديمة.",
+        biotech: "يوفر إطاراً موحداً لتوقع وجود المركبات الكيميائية الحيوية والمسارات الأيضية في النباتات استناداً إلى قرابتها التطورية الوراثية على شجرة الحياة.",
+        aqiq: "أعاد هذا النظام تصنيف أشجار السمر من جنس Acacia القديم إلى جنس Vachellia، كما صنف الرمث ضمن عائلة Amaranthaceae بدلاً من Chenopodiaceae السابقة."
+      },
+      "Plastome": {
+        term: "جينوم البلاستيدة الخضراء (Plastome)",
+        en: "Chloroplast Genome / Plastid Chromosome",
+        category: "بنية الجينوم",
+        def: "جزيء DNA حلقي مزدوج يوجد داخل البلاستيدات الخضراء، يتراوح طوله بين 120 إلى 170 ألف زوج قواعد (kb)، ويحتوي على منطقتين مقلوبتين مكررتين (IRa/IRb) تفصلان بين منطقتين مفردتين (LSC و SSC).",
+        biotech: "يتميز بالتوريث الأمومي في معظم كاسيات البذور وعدم خضوعه لإعادة الخلط الجيني (Recombination)، مما يجعله الأداة المثالية لتتبع التاريخ النشوئي والتطور الجغرافي للنباتات.",
+        aqiq: "يمتلك نبات الأراك والسمر بلاستيداً أخضر محفوظاً جينياً يبلغ طوله حوالي 155 kb يحمل كافة جينات البناء الضوئي المعقدة."
+      },
+      "C4_Kranz": {
+        term: "التمثيل الضوئي C4 وتشريح كرانز",
+        en: "C4 Photosynthesis & Kranz Anatomy",
+        category: "الفسيولوجيا النباتية",
+        def: "آلية تمثيل ضوئي متقدمة يتم فيها فصل التثبيت الأولي لـ CO2 عن حلقة كالفن مكانياً عبر طبقتين من الخلايا: خلايا النسيج المتوسط وخلايا غلاف الحزمة الوعائية المحاطة بإكليل شعاعي (تشريح كرانز).",
+        biotech: "تمنع هذه الآلية هدر الطاقة في عملية التنفس الضوئي (Photorespiration) وتزيد من كفاءة استهلاك المياه (Water Use Efficiency) بأكثر من الضعف مقارنة بمسار C3.",
+        aqiq: "يُمثل نبات الرمث (Haloxylon) في وادي العقيق النموذج الأبرز لمسار C4، حيث يمكنه التمثيل الضوئي بكفاءة قصوى أثناء الظهيرة مع الحفاظ التام على محتواه المائي."
+      },
+      "Halophyte": {
+        term: "النباتات الملحية (Halophytes)",
+        en: "Halophytic Desert Plants",
+        category: "البيئة والتكيف",
+        def: "نباتات متخصصة فسيولوجياً تمتلك القدرة على النمو وإكمال دورة حياتها في بيئات ذات تركيزات عالية من كلوريد الصوديوم تزيد عن 200 ملي مولار (مستوى يقتل 99% من النباتات العادية).",
+        biotech: "تُعد مصدراً رئيسياً لاستخلاص جينات مضخات الأملاح الفجوية (مثل عائلة NHX و HKT) لاستخدامها في الهندسة الوراثية لتحسين المحاصيل الزراعية الغذائية.",
+        aqiq: "يُعد الأراك (Salvadora persica) نباتاً ملحياً اختيارياً في رواسب وادي العقيق يمتص الأملاح ويخزنها في فجوات خاصة مع زيادة إفراز إنزيمات حماية الأغشية الخلوية."
+      },
+      "Shikimate_Pathway": {
+        term: "مسار الشيكيمات (Shikimate Pathway)",
+        en: "Biosynthetic Shikimate Metabolic Route",
+        category: "الأيض الثانوي والكيمياء الحيوية",
+        def: "مسار كيميائي حيوي مكون من سبع خطوات إنزيمية متتابعة مسؤول عن ربط أيض الكربوهيدرات بتخليق الأحماض الأمينية العطرية (Phenylalanine, Tyrosine, Tryptophan) في النباتات والبكتيريا.",
+        biotech: "يُعتبر المنطلق الحيوي لتصنيع التانينات، الفلافونويدات، واللجنين التي تمثل خط الدفاع الأول ضد الإجهادات البيئية وأشعة الشمس الحارقة.",
+        aqiq: "ينشط هذا المسار بكثافة في أشجار السمر والسدر بوادي العقيق لإنتاج كميات هائلة من البوليفينولات المانعة للأكسدة التي تحمي خلايا الأوراق من التحلل الضوئي الصيفي."
+      }
+    };
+
+    /* =========================================================================
+       3. AMINO ACID CODON TABLE (FOR DNA TRANSLATION)
+       ========================================================================= */
+    const codonTable = {
+      'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
+      'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
+      'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
+      'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
+      'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
+      'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
+      'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
+      'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
+      'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
+      'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
+      'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
+      'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
+      'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
+      'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
+      'TAC':'Y', 'TAT':'Y', 'TAA':'_', 'TAG':'_',
+      'TGC':'C', 'TGT':'C', 'TGA':'_', 'TGG':'W',
+    };
+
+    /* =========================================================================
+       4. APPLICATION STATE MANAGEMENT
+       ========================================================================= */
+    let currentMarker = 'rbcL';
+    let isTranslationMode = false;
+    let activeGenomicsId = 'vachellia';
+    let currentDrawerId = 'vachellia';
+    let phyloScale = 1.0;
+
+    /* =========================================================================
+       5. INITIALIZATION
+       ========================================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAtlasCards(speciesDB);
+      populateSelectors();
+      loadGenomicsData('vachellia');
+      runComparison();
+      renderGlossaryCards(scientificGlossary);
+    });
+
+    /* =========================================================================
+       6. CORE NAVIGATION TABS
+       ========================================================================= */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+      const targetView = document.getElementById(`view-${tabId}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      // Update Desktop Nav styles
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.className = "nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+      });
+      const activeBtn = document.getElementById(`nav-tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "nav-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-white dark:bg-slate-700 text-brand-700 dark:text-brand-300 shadow-sm";
+      }
+
+      // Update Mobile Nav styles
+      document.querySelectorAll('.nav-tab-mobile').forEach(btn => {
+        if (btn.getAttribute('data-target') === tabId) {
+          btn.className = "nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-brand-500 text-white";
+        } else {
+          btn.className = "nav-tab-mobile px-3 py-1.5 rounded-lg shrink-0 font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+        }
+      });
+    }
+
+    /* =========================================================================
+       7. TAB 1: FLORA ATLAS MODULE
+       ========================================================================= */
+    function renderAtlasCards(list) {
+      const grid = document.getElementById('species-grid');
+      grid.innerHTML = '';
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-400">
+            <i class="fa-solid fa-seedling text-4xl mb-3 text-slate-300"></i>
+            <p class="text-sm font-semibold">لم يتم العثور على نباتات مطابقة لمعايير البحث الحالية.</p>
+            <button onclick="resetAtlasFilters()" class="mt-3 text-xs text-brand-600 dark:text-brand-400 font-semibold underline">إعادة ضبط المرشحات</button>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(sp => {
+        const card = document.createElement('div');
+        card.className = "group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between";
+
+        card.innerHTML = `
+          <div>
+            <!-- High-Res Plant Visual Header -->
+            <div class="relative h-48 w-full overflow-hidden bg-slate-950">
+              <img 
+                src="${sp.photoUrl}" 
+                alt="${sp.arabicName}" 
+                onerror="this.src='https://placehold.co/600x400/1e293b/10b981?text=${encodeURIComponent(sp.sciName)}'"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+              >
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20"></div>
+
+              <!-- Badges on Photo -->
+              <div class="absolute top-3 right-3 flex items-center gap-1.5">
+                <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-900/80 backdrop-blur-md text-brand-300 border border-brand-500/30 font-semibold">
+                  ${sp.family}
+                </span>
+              </div>
+
+              <div class="absolute top-3 left-3">
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/60 backdrop-blur-md text-emerald-300 border border-emerald-500/40">
+                  ${sp.photosynthesis}
+                </span>
+              </div>
+
+              <div class="absolute bottom-3 right-3 text-white">
+                <h3 class="text-lg font-bold drop-shadow-md text-white">${sp.arabicName}</h3>
+                <p class="text-xs font-mono italic text-slate-200 drop-shadow">${sp.sciName}</p>
+              </div>
+            </div>
+
+            <!-- Card Content Body -->
+            <div class="p-4 space-y-3">
+              <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-tree text-emerald-600 text-[11px]"></i> ${sp.habit}</span>
+                <span class="font-mono text-[11px]">${sp.clade}</span>
+              </div>
+
+              <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                ${sp.adaptations}
+              </p>
+
+              <!-- Secondary Metabolite Badge Preview -->
+              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-[11px] flex items-start gap-1.5">
+                <i class="fa-solid fa-flask text-amber-500 text-[10px] mt-0.5 shrink-0"></i>
+                <span class="text-slate-600 dark:text-slate-300 line-clamp-1 font-mono">${sp.metabolites}</span>
+              </div>
+
+              <!-- Sequence Metrics Bar -->
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div class="text-slate-500">محتوى GC: <span class="font-bold text-slate-800 dark:text-slate-200">${sp.gcContent}</span></div>
+                <div class="text-slate-500">الباركود: <span class="font-bold text-brand-600 dark:text-brand-400">rbcL / matK</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Actions Footer -->
+          <div class="p-4 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <button onclick="openDrawer('${sp.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-info text-brand-500"></i>
+              <span>الملف الشامل</span>
+            </button>
+            <button onclick="directToGenomics('${sp.id}')" class="px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-900/60 text-xs font-bold text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-dna"></i>
+              <span>فحص التسلسل</span>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterAtlas() {
+      const q = document.getElementById('atlas-search').value.toLowerCase().trim();
+      const fam = document.getElementById('atlas-filter-family').value;
+      const photo = document.getElementById('atlas-filter-photosynthesis').value;
+      const hab = document.getElementById('atlas-filter-habit').value;
+
+      const filtered = speciesDB.filter(sp => {
+        const matchesQ = sp.arabicName.toLowerCase().includes(q) || 
+                         sp.sciName.toLowerCase().includes(q) || 
+                         sp.family.toLowerCase().includes(q) ||
+                         sp.metabolites.toLowerCase().includes(q);
+        const matchesFam = (fam === 'all') || (sp.family === fam);
+        const matchesPhoto = (photo === 'all') || (sp.photosynthesis === photo);
+        const matchesHab = (hab === 'all') || (sp.habit === hab);
+        return matchesQ && matchesFam && matchesPhoto && matchesHab;
+      });
+
+      renderAtlasCards(filtered);
+    }
+
+    function resetAtlasFilters() {
+      document.getElementById('atlas-search').value = '';
+      document.getElementById('atlas-filter-family').value = 'all';
+      document.getElementById('atlas-filter-photosynthesis').value = 'all';
+      document.getElementById('atlas-filter-habit').value = 'all';
+      renderAtlasCards(speciesDB);
+    }
+
+    /* =========================================================================
+       8. TAB 2: PHYLOGENOMICS (APG IV)
+       ========================================================================= */
+    const nodeDetails = {
+      'Angiosperms': {
+        title: "كاسيات البذور (Angiosperms)",
+        desc: "انفصلت النباتات الزهرية قبل ما يقارب 138 مليون سنة خلال العصر الطباشيري المبكر. تمتاز بالبذور المحمية داخل المبايض والإخصاب المزدوج، وتشكل 100% من الأنواع المهيمنة على حوض وادي العقيق.",
+        age: "~138 MYA (Early Cretaceous)",
+        support: "Bootstrap: 100% (ML)",
+        synapomorphy: "الإخصاب المزدوج، أوعية الخشب المتقدمة، حماية البذور"
+      },
+      'Eudicots': {
+        title: "ذوات الفلقتين الحقيقية (Eudicots / Tricolpates)",
+        desc: "فرع نباتي ضخم يمتاز بحبوب اللقاح ذات الثغور الثلاثية (Tricolpate). تنتمي إليها جميع عينات دراستنا في وادي العقيق بفضل تكيف أوعيتها اللحائية لمجابهة الانصمام الهوائي أثناء الجفاف.",
+        age: "~120 MYA",
+        support: "Bootstrap: 98% (ML)",
+        synapomorphy: "حبوب لقاح ثلاثية الشقوق، تعرق شبكي متفرع"
+      },
+      'Rosids': {
+        title: "فرع الوردانيات (Rosids Clade)",
+        desc: "الفرع النشوئي الذي يضم البقوليات (Fabaceae) والنبقيات (Rhamnaceae) والسلفادوريات (Salvadoraceae). يمتاز بقوة الاستجابة الأيضية بتخليق التانينات والجلوكوسينولات.",
+        age: "~105 MYA",
+        support: "Bootstrap: 95% (ML)",
+        synapomorphy: "مرونة تخليق التانينات ومسار الشيكيمات المتقدم"
+      },
+      'Fabids': {
+        title: "الفوليات (Fabids / Eurosids I)",
+        desc: "يضم رتبتي Fabales (السمر) و Rosales (السدر). تطورت في هذا الفرع آليات التعايش الجذري وتثبيت النيتروجين والتحورات الشوكية لمجابهة الرعي الجائر.",
+        age: "~92 MYA",
+        support: "Bootstrap: 94% (ML)",
+        synapomorphy: "التحورات الشوكية الدفاعية والعقد الجذرية"
+      },
+      'Superasterids': {
+        title: "مجموعة فوق النجميات والقرنفليات (Superasterids)",
+        desc: "تضم رتب Gentianales (العُشر) و Caryophyllales (الرمث). تمايزت فيها آليات التمثيل الضوئي C4 واللبن النباتي السام وتراكم الأوكزالات لمجابهة أشد درجات القحولة.",
+        age: "~100 MYA",
+        support: "Bootstrap: 96% (ML)",
+        synapomorphy: "تطور مسارات الأيض المتخصص وتشريح كرانز"
+      }
+    };
+
+    function showPhyloNode(nodeKey) {
+      const data = nodeDetails[nodeKey];
+      if (!data) return;
+
+      document.getElementById('node-tag').innerText = "عقدة تصنيفية تطورية";
+      document.getElementById('node-title').innerText = data.title;
+      document.getElementById('node-desc').innerText = data.desc;
+      document.getElementById('node-age').innerText = data.age;
+      document.getElementById('node-support').innerText = data.support;
+      document.getElementById('node-synapomorphy').innerText = data.synapomorphy;
+    }
+
+    function selectPlantFromPhylo(id) {
+      const sp = speciesDB.find(s => s.id === id);
+      if (!sp) return;
+
+      document.getElementById('node-tag').innerText = "الفرع النهائي (Terminal Taxon)";
+      document.getElementById('node-title').innerText = `${sp.arabicName} (${sp.sciName})`;
+      document.getElementById('node-desc').innerText = `${sp.habitat} — التكيف الرئيسي: ${sp.adaptations}`;
+      document.getElementById('node-age').innerText = sp.clade;
+      document.getElementById('node-support').innerText = `Accession: ${sp.accession}`;
+      document.getElementById('node-synapomorphy').innerText = `مسار التمثيل: ${sp.photosynthesis} | GC%: ${sp.gcContent}`;
+    }
+
+    function zoomPhylo(factor) {
+      phyloScale *= factor;
+      phyloScale = Math.min(Math.max(phyloScale, 0.7), 1.8);
+      document.getElementById('cladogram-svg').style.transform = `scale(${phyloScale})`;
+    }
+
+    function resetPhyloZoom() {
+      phyloScale = 1.0;
+      document.getElementById('cladogram-svg').style.transform = 'scale(1.0)';
+    }
+
+    /* =========================================================================
+       9. TAB 3: GENOMICS & DNA BARCODE STUDIO
+       ========================================================================= */
+    function populateSelectors() {
+      const genSelect = document.getElementById('genomic-species-select');
+      const cmpSelect1 = document.getElementById('compare-select-1');
+      const cmpSelect2 = document.getElementById('compare-select-2');
+      const cmpSelect3 = document.getElementById('compare-select-3');
+
+      genSelect.innerHTML = '';
+      cmpSelect1.innerHTML = '';
+      cmpSelect2.innerHTML = '';
+      cmpSelect3.innerHTML = '';
+
+      speciesDB.forEach((sp, idx) => {
+        genSelect.innerHTML += `<option value="${sp.id}">${sp.arabicName} (${sp.sciName})</option>`;
+        cmpSelect1.innerHTML += `<option value="${sp.id}" ${idx === 0 ? 'selected' : ''}>${sp.arabicName} (${sp.sciName})</option>`;
+        cmpSelect2.innerHTML += `<option value="${sp.id}" ${idx === 1 ? 'selected' : ''}>${sp.arabicName} (${sp.sciName})</option>`;
+        cmpSelect3.innerHTML += `<option value="${sp.id}" ${idx === 5 ? 'selected' : ''}>${sp.arabicName} (${sp.sciName})</option>`;
+      });
+    }
+
+    function setMarker(marker) {
+      currentMarker = marker;
+      const btnRbc = document.getElementById('locus-btn-rbcl');
+      const btnMat = document.getElementById('locus-btn-matk');
+
+      if (marker === 'rbcL') {
+        btnRbc.className = "px-3 py-1 rounded-lg bg-brand-600 text-white shadow-sm transition";
+        btnMat.className = "px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-brand-600 transition";
+      } else {
+        btnMat.className = "px-3 py-1 rounded-lg bg-brand-600 text-white shadow-sm transition";
+        btnRbc.className = "px-3 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:text-brand-600 transition";
+      }
+
+      loadGenomicsData(activeGenomicsId);
+      showToast(`تم التبديل إلى المؤشر الجزيئي: ${marker}`);
+    }
+
+    function toggleTranslationMode() {
+      isTranslationMode = !isTranslationMode;
+      const btnLabel = document.getElementById('trans-btn-label');
+      const indicator = document.getElementById('translation-indicator');
+      const legend = document.getElementById('barcode-legend');
+
+      if (isTranslationMode) {
+        btnLabel.innerText = "عرض كـ نيوكليوتيدات (DNA)";
+        indicator.innerText = "Amino Acid Mode";
+        legend.innerHTML = `
+          <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">Amino Acid Residues</span>
+        `;
+      } else {
+        btnLabel.innerText = "عرض كـ أحماض أمينية (AA)";
+        indicator.innerText = "Nucleotide Mode";
+        legend.innerHTML = `
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">A = أدينين</span>
+          <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">T = ثايمين</span>
+          <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">C = سايتوسين</span>
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">G = جوانين</span>
+        `;
+      }
+
+      loadGenomicsData(activeGenomicsId);
+    }
+
+    function translateDNAtoAA(dnaSeq) {
+      let aa = "";
+      for (let i = 0; i < dnaSeq.length - 2; i += 3) {
+        const codon = dnaSeq.substring(i, i + 3).toUpperCase();
+        aa += codonTable[codon] || "?";
+      }
+      return aa;
+    }
+
+    function loadGenomicsData(speciesId) {
+      activeGenomicsId = speciesId;
+      const sp = speciesDB.find(s => s.id === speciesId) || speciesDB[0];
+
+      document.getElementById('genomic-species-select').value = sp.id;
+      const seq = sp.sequences[currentMarker];
+
+      // Key Metrics
+      document.getElementById('metric-len').innerText = `${seq.length} bp`;
+      document.getElementById('metric-gc').innerText = sp.gcContent;
+      document.getElementById('metric-gc-bar').style.width = sp.gcContent;
+      document.getElementById('metric-acc').innerText = sp.accession;
+      document.getElementById('metric-primers').innerText = currentMarker === 'rbcL' ? "rbcLa-F / rbcLa-R" : "matK-390F / matK-1326R";
+
+      // Barcode Strip Visualization
+      const strip = document.getElementById('barcode-visual-strip');
+      strip.innerHTML = '';
+
+      if (!isTranslationMode) {
+        // DNA Mode: first 60 nucleotides
+        const sample = seq.substring(0, 60).split('');
+        sample.forEach((base, i) => {
+          const div = document.createElement('div');
+          div.className = `nucleotide-block py-2.5 px-0.5 rounded font-mono font-bold text-[11px] cursor-default ${getNucleotideStyle(base)}`;
+          div.innerText = base;
+          div.title = `Site #${i+1} : ${base}`;
+          strip.appendChild(div);
+        });
+      } else {
+        // Protein / AA Mode: first 20 amino acids
+        const aaSeq = translateDNAtoAA(seq).substring(0, 20);
+        aaSeq.split('').forEach((res, i) => {
+          const div = document.createElement('div');
+          div.className = `nucleotide-block py-2.5 px-1 rounded font-mono font-bold text-xs cursor-default bg-purple-950 text-purple-300 border border-purple-700/60`;
+          div.innerText = res;
+          div.title = `Codon #${i+1} : ${res}`;
+          strip.appendChild(div);
+        });
+      }
+
+      // FASTA Sequence Display
+      let fastaContent = "";
+      if (!isTranslationMode) {
+        fastaContent = `>${sp.sciName.replace(/\s+/g, '_')}_${currentMarker}_WadiAqiq_Standard_Locus\n${chunkString(seq, 50)}`;
+      } else {
+        const aa = translateDNAtoAA(seq);
+        fastaContent = `>${sp.sciName.replace(/\s+/g, '_')}_${currentMarker}_Translated_Protein\n${chunkString(aa, 40)}`;
+      }
+      document.getElementById('fasta-display').textContent = fastaContent;
+
+      // Functional Stress Adaptive Genes
+      const genesContainer = document.getElementById('functional-genes-list');
+      genesContainer.innerHTML = '';
+      sp.stressGenes.forEach(g => {
+        genesContainer.innerHTML += `
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+            <span class="font-mono font-bold text-xs text-purple-600 dark:text-purple-400">${g.name}</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300">${g.role}</span>
+          </div>
+        `;
+      });
+    }
+
+    function getNucleotideStyle(base) {
+      switch(base.toUpperCase()) {
+        case 'A': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        case 'T': return 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+        case 'C': return 'bg-blue-500/20 text-blue-400 border border-blue-500/30';
+        case 'G': return 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        default: return 'bg-slate-800 text-slate-300';
+      }
+    }
+
+    function chunkString(str, len) {
+      const match = str.match(new RegExp('.{1,' + len + '}', 'g'));
+      return match ? match.join('\n') : str;
+    }
+
+    function copyFasta() {
+      const text = document.getElementById('fasta-display').innerText;
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select();
+      try {
+        document.execCommand('copy');
+        showToast("تم نسخ تسلسل FASTA إلى الحافظة بنجاح");
+      } catch (e) {
+        showToast("فشل النسخ التلقائي");
+      }
+      document.body.removeChild(el);
+    }
+
+    function directToGenomics(id) {
+      activeGenomicsId = id;
+      loadGenomicsData(id);
+      switchTab('genomics');
+    }
+
+    /* =========================================================================
+       10. TAB 4: MULTI-TAXA COMPARATIVE ANALYSIS
+       ========================================================================= */
+    function runComparison() {
+      const id1 = document.getElementById('compare-select-1').value;
+      const id2 = document.getElementById('compare-select-2').value;
+      const id3 = document.getElementById('compare-select-3').value;
+
+      const sp1 = speciesDB.find(s => s.id === id1) || speciesDB[0];
+      const sp2 = speciesDB.find(s => s.id === id2) || speciesDB[1];
+      const sp3 = speciesDB.find(s => s.id === id3) || speciesDB[5];
+
+      document.getElementById('cmp-name-1').innerText = `${sp1.arabicName} (${sp1.sciName})`;
+      document.getElementById('cmp-name-2').innerText = `${sp2.arabicName} (${sp2.sciName})`;
+      document.getElementById('cmp-name-3').innerText = `${sp3.arabicName} (${sp3.sciName})`;
+
+      const rows = [
+        { label: "العائلة النباتية (Family)", val1: sp1.family, val2: sp2.family, val3: sp3.family },
+        { label: "الفرع التطوري (Clade)", val1: sp1.clade, val2: sp2.clade, val3: sp3.clade },
+        { label: "الهيئة المورفولوجية", val1: sp1.habit, val2: sp2.habit, val3: sp3.habit },
+        { label: "مسار التمثيل الضوئي", val1: `<span class="font-bold text-emerald-600">${sp1.photosynthesis}</span>`, val2: `<span class="font-bold text-emerald-600">${sp2.photosynthesis}</span>`, val3: `<span class="font-bold text-emerald-600">${sp3.photosynthesis}</span>` },
+        { label: "الموطن في وادي العقيق", val1: sp1.habitat, val2: sp2.habitat, val3: sp3.habitat },
+        { label: "آلية التكيف المورفولوجي والفسيولوجي", val1: sp1.adaptations, val2: sp2.adaptations, val3: sp3.adaptations },
+        { label: "الأيض الثانوي الرئيسي", val1: sp1.metabolites, val2: sp2.metabolites, val3: sp3.metabolites },
+        { label: "المسارات الكيميائية الحيوية", val1: sp1.pathways, val2: sp2.pathways, val3: sp3.pathways },
+        { label: "محتوى GC% للكلوروبلاست", val1: `<span class="font-mono font-bold text-brand-600">${sp1.gcContent}</span>`, val2: `<span class="font-mono font-bold text-purple-600">${sp2.gcContent}</span>`, val3: `<span class="font-mono font-bold text-amber-600">${sp3.gcContent}</span>` },
+        { label: "أبرز جينات مجابهة الإجهاد", val1: sp1.stressGenes.map(g => `<span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded ml-1">${g.name}</span>`).join(''), val2: sp2.stressGenes.map(g => `<span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded ml-1">${g.name}</span>`).join(''), val3: sp3.stressGenes.map(g => `<span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded ml-1">${g.name}</span>`).join('') },
+        { label: "معرف NCBI GenBank", val1: `<span class="font-mono">${sp1.accession}</span>`, val2: `<span class="font-mono">${sp2.accession}</span>`, val3: `<span class="font-mono">${sp3.accession}</span>` }
+      ];
+
+      const tbody = document.getElementById('cmp-table-body');
+      tbody.innerHTML = '';
+
+      rows.forEach(r => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition">
+            <td class="p-4 font-semibold text-slate-800 dark:text-slate-200 bg-slate-50/40 dark:bg-slate-800/20">${r.label}</td>
+            <td class="p-4 leading-relaxed">${r.val1}</td>
+            <td class="p-4 leading-relaxed">${r.val2}</td>
+            <td class="p-4 leading-relaxed">${r.val3}</td>
+          </tr>
+        `;
+      });
+    }
+
+    /* =========================================================================
+       11. TAB 5: SCIENTIFIC GLOSSARY MODULE
+       ========================================================================= */
+    function renderGlossaryCards(dict) {
+      const grid = document.getElementById('glossary-grid');
+      grid.innerHTML = '';
+
+      Object.keys(dict).forEach(key => {
+        const item = dict[key];
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm hover:border-brand-500 transition-all";
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold border border-brand-200 dark:border-brand-800">${item.category}</span>
+              <h3 class="text-base font-bold text-slate-900 dark:text-white mt-1.5">${item.term}</h3>
+              <p class="text-xs font-mono text-slate-400">${item.en}</p>
+            </div>
+            <button onclick="openGlossaryModal('${key}')" class="p-2 text-slate-400 hover:text-brand-600 transition" title="عرض الشرح الموسع">
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            ${item.def}
+          </p>
+
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+            <i class="fa-solid fa-seedling ml-1"></i>
+            <span>تطبيق وادي العقيق: </span>
+            <span class="text-slate-600 dark:text-slate-400">${item.aqiq}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterGlossary() {
+      const q = document.getElementById('glossary-search').value.toLowerCase().trim();
+      const filtered = {};
+      Object.keys(scientificGlossary).forEach(k => {
+        const it = scientificGlossary[k];
+        if (it.term.toLowerCase().includes(q) || it.en.toLowerCase().includes(q) || it.def.toLowerCase().includes(q)) {
+          filtered[k] = it;
+        }
+      });
+      renderGlossaryCards(filtered);
+    }
+
+    function openGlossaryModal(termKey) {
+      const item = scientificGlossary[termKey];
+      if (!item) return;
+
+      document.getElementById('gmodal-category').innerText = item.category;
+      document.getElementById('gmodal-term').innerText = item.term;
+      document.getElementById('gmodal-en').innerText = item.en;
+      document.getElementById('gmodal-def').innerText = item.def;
+      document.getElementById('gmodal-biotech').innerText = item.biotech;
+      document.getElementById('gmodal-aqiq').innerText = item.aqiq;
+
+      document.getElementById('glossary-modal').classList.remove('hidden');
+    }
+
+    function closeGlossaryModal() {
+      document.getElementById('glossary-modal').classList.add('hidden');
+    }
+
+    /* =========================================================================
+       12. DRAWER & MODAL MANAGEMENT
+       ========================================================================= */
+    function openDrawer(id) {
+      currentDrawerId = id;
+      const sp = speciesDB.find(s => s.id === id);
+      if (!sp) return;
+
+      document.getElementById('drawer-img').src = sp.photoUrl;
+      document.getElementById('drawer-family').innerText = sp.family;
+      document.getElementById('drawer-name').innerText = sp.arabicName;
+      document.getElementById('drawer-sci').innerText = sp.sciName;
+      document.getElementById('drawer-clade').innerText = sp.clade;
+      document.getElementById('drawer-order').innerText = sp.order;
+      document.getElementById('drawer-photosyn').innerText = sp.photosynthesis;
+      document.getElementById('drawer-habitat').innerText = sp.habitat;
+      document.getElementById('drawer-adaptations').innerText = sp.adaptations;
+      document.getElementById('drawer-accession').innerText = sp.accession;
+      document.getElementById('drawer-gc').innerText = sp.gcContent;
+      document.getElementById('drawer-metabolites').innerText = sp.metabolites;
+      document.getElementById('drawer-pathways').innerText = sp.pathways;
+
+      // Populate stress genes in drawer
+      const dGenes = document.getElementById('drawer-stress-genes');
+      dGenes.innerHTML = '';
+      sp.stressGenes.forEach(g => {
+        dGenes.innerHTML += `
+          <div class="p-2 rounded bg-slate-100 dark:bg-slate-800 flex justify-between font-mono text-[11px]">
+            <span class="font-bold text-purple-600 dark:text-purple-400">${g.name}</span>
+            <span class="text-slate-600 dark:text-slate-300 font-sans">${g.role}</span>
+          </div>
+        `;
+      });
+
+      switchDrawerSubTab('botany');
+      document.getElementById('plant-drawer').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      document.getElementById('plant-drawer').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    function switchDrawerSubTab(tab) {
+      ['botany', 'genomics', 'metabolites'].forEach(t => {
+        document.getElementById(`dcontent-${t}`).classList.add('hidden');
+        document.getElementById(`dtab-${t}`).className = "py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white";
+      });
+
+      document.getElementById(`dcontent-${tab}`).classList.remove('hidden');
+      document.getElementById(`dtab-${tab}`).className = "py-3 border-b-2 border-brand-500 text-brand-600 dark:text-brand-400";
+    }
+
+    function inspectInGenomics() {
+      if (currentDrawerId) {
+        closeDrawer();
+        directToGenomics(currentDrawerId);
+      }
+    }
+
+    /* =========================================================================
+       13. THEME & TOAST UTILITY
+       ========================================================================= */
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.className = "fa-solid fa-moon text-xs";
+        showToast("تم تفعيل المظهر النهاري");
+      } else {
+        html.classList.add('dark');
+        icon.className = "fa-solid fa-sun text-xs text-amber-400";
+        showToast("تم تفعيل المظهر الليلي");
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      if (!toast) return;
+
+      text.innerText = msg;
+      toast.classList.remove('translate-y-16', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-16', 'opacity-0');
+      }, 2600);
+    }
+  </script>
+</body>
+</html>
